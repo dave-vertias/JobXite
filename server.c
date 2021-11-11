@@ -66,6 +66,8 @@ int python_exec(){
 int main(int argc, char *argv[]){
 
     int status;
+    struct sockaddr_storage their_addr;
+    socklen_t addr_size;
     struct addrinfo hints, *res, *p;
     const char IP[13] = "192.168.1.65";
     const char port[5] = "5000";
@@ -99,8 +101,20 @@ int main(int argc, char *argv[]){
        printf("%s:%s \n", ipver,ipstr);
    }
 
-   freeaddrinfo(res);
+   int s = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+   int b = bind(s, res->ai_addr, res->ai_addrlen);
+   int l = listen(s, BACKLOG);
 
+   addr_size = sizeof(their_addr);
+
+   new_fd = accept(s, (struct sockaddr *)&their_addr, &addr_size);
+
+   char *msg = "Jobxite will be live by thanksgiving";
+   int len = len(msg);
+
+   bytes = send(s,msg,len,0);
+
+   freeaddrinfo(res);
 
     return 0;
 }
